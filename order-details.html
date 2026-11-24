@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Details</title>
+  <link rel="icon" href="resimg.jpg">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bg-deep:#150f0c;
+      --bg-panel:#1f1811;
+      --bg-panel-alt:#241a15;
+      --gold:#c9a15b;
+      --gold-bright:#e8c97a;
+      --spice:#b5432e;
+      --spice-bright:#d5573b;
+      --ivory:#f4ebdd;
+      --muted:#b3a48d;
+      --border-soft: rgba(198,161,91,0.22);
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      background:
+        linear-gradient(rgba(21,15,12,0.75), rgba(21,15,12,0.82)),
+        url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1600&q=80') center/cover fixed no-repeat;
+      color:var(--ivory);
+      font-family:'Jost', sans-serif;
+      min-height:100vh;
+      padding:30px 0;
+    }
+    .wrap{
+      max-width:980px;
+      margin:0 auto;
+      background: rgba(31,24,17,0.9);
+      border:1px solid var(--border-soft);
+      border-radius:18px;
+      padding:32px;
+      box-shadow:0 12px 35px rgba(0,0,0,0.25);
+    }
+    h1,h2,h3,.brand{ font-family:'Cormorant Garamond', serif; }
+    .tag{ color:var(--gold); letter-spacing:0.08em; text-transform:uppercase; font-size:0.82rem; }
+    h1{ font-size: clamp(2.1rem, 4vw, 3rem); margin:8px 0 8px; }
+    .meta{ color:var(--muted); }
+    .order-box{
+      background: rgba(36,26,21,0.9);
+      border:1px solid var(--border-soft);
+      border-radius:12px;
+      padding:22px;
+      margin-top:24px;
+    }
+    .item-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:14px 0;
+      border-bottom:1px dashed var(--border-soft);
+      gap:16px;
+    }
+    .item-row:last-child{ border-bottom:none; }
+    .item-name{ font-size:1.08rem; }
+    .item-sub{ color:var(--muted); font-size:0.82rem; }
+    .total{
+      display:flex; justify-content:space-between; align-items:center;
+      margin-top:20px; padding-top:18px; border-top:1px solid var(--border-soft);
+      font-size:1.2rem; }
+    .amount{ color:var(--gold-bright); font-weight:600; }
+    .history-list{ display:grid; gap:1rem; margin-top:28px; }
+    .info-box{
+      background: rgba(36, 26, 21, 0.9);
+      border:1px solid var(--border-soft);
+      border-radius:12px;
+      padding:1.2rem 1.1rem;
+      margin-top:24px;
+    }
+    .info-row{ display:flex; justify-content:space-between; gap:1rem; padding:0.5rem 0; border-bottom:1px dashed var(--border-soft); }
+    .info-row:last-child{ border-bottom:none; }
+    .info-label{ color:var(--muted); }
+    .info-value{ color:var(--ivory); text-align:right; }
+    .history-card{
+      background: rgba(36, 26, 21, 0.9);
+      border:1px solid var(--border-soft);
+      border-radius:12px;
+      padding:1rem 1.1rem;
+    }
+    .history-top{ display:flex; justify-content:space-between; align-items:center; gap:1rem; border-bottom:1px dashed var(--border-soft); padding-bottom:0.8rem; margin-bottom:0.8rem; }
+    .history-id{ color:var(--gold-bright); font-family:'Cormorant Garamond', serif; font-size:1.8rem; margin:0; }
+    .history-date{ color:var(--muted); font-size:0.85rem; }
+    .badge-paid{ background: rgba(76,175,80,0.18); color:#7fd989; border:1px solid rgba(76,175,80,0.4); font-weight:500; border-radius:999px; padding:0.35rem 0.8rem; }
+    .history-items{ color:var(--muted); line-height:1.7; }
+    .history-total{ display:flex; justify-content:space-between; align-items:center; margin-top:0.8rem; }
+    .history-total .amt{ color:var(--gold-bright); font-family:'Cormorant Garamond', serif; font-size:1.7rem; }
+    .delete-order{
+      border:1px solid rgba(213,87,59,0.55); background:transparent; color:#f08a72;
+      border-radius:6px; padding:0.35rem 0.7rem; font-size:0.8rem; cursor:pointer;
+    }
+    .delete-order:hover{ background:var(--spice); color:#fff; }
+    .btn-home{
+      margin-top:26px;
+      background: linear-gradient(180deg, var(--spice-bright), var(--spice));
+      color:#fff; border:none; border-radius:8px; padding:0.9rem 1.5rem; font-weight:600;
+    }
+    footer{ text-align:center; color:var(--muted); font-size:0.85rem; padding:1.5rem 0 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="tag">Order Receipt</div>
+    <h1>Order details</h1>
+    <div class="meta" id="orderMeta">Loading your order...</div>
+
+    <div class="order-box">
+      <div id="orderItems"></div>
+      <div class="total">
+        <span>Total</span>
+        <span class="amount" id="orderTotal">₹0</span>
+      </div>
+    </div>
+
+    <div class="info-box" id="deliveryBox"></div>
+    <div class="history-list" id="historyList"></div>
+
+    <a href="/" class="btn btn-home">Back to menu</a>
+  </div>
+
+  <footer>Powered by ❤️ Praveen</footer>
+
+  <script>
+    const latestOrder = JSON.parse(localStorage.getItem('ak_latest_order') || 'null');
+    let allOrders = JSON.parse(localStorage.getItem('ak_orders') || '[]');
+    const meta = document.getElementById('orderMeta');
+    const itemsEl = document.getElementById('orderItems');
+    const totalEl = document.getElementById('orderTotal');
+    const historyList = document.getElementById('historyList');
+    const deliveryBox = document.getElementById('deliveryBox');
+
+    if (!latestOrder) {
+      meta.textContent = 'No order found. Please place an order from the menu.';
+      itemsEl.innerHTML = '<div class="meta">No items available.</div>';
+      totalEl.textContent = '₹0';
+      historyList.innerHTML = '<div class="history-card"><div class="meta">No previous orders yet.</div></div>';
+      deliveryBox.innerHTML = '<div class="meta">Delivery details not available.</div>';
+    } else {
+      meta.textContent = 'Order ID: ' + latestOrder.id + ' • ' + latestOrder.date;
+      itemsEl.innerHTML = latestOrder.items.map(item => `
+        <div class="item-row">
+          <div>
+            <div class="item-name">${item.name} × ${item.qty}</div>
+            <div class="item-sub">${item.veg ? 'Veg' : 'Non-veg'} • ₹${item.price} each</div>
+          </div>
+          <div class="amount">₹${item.lineTotal}</div>
+        </div>
+      `).join('');
+      totalEl.textContent = '₹' + latestOrder.total;
+
+      const payment = latestOrder.payment || {};
+      deliveryBox.innerHTML = `
+        <h3 style="margin:0 0 0.8rem; font-size:1.6rem;">Delivery & payment</h3>
+        <div class="info-row"><span class="info-label">Customer</span><span class="info-value">${payment.name || 'Not provided'}</span></div>
+        <div class="info-row"><span class="info-label">Phone</span><span class="info-value">${payment.phone || 'Not provided'}</span></div>
+        <div class="info-row"><span class="info-label">Address</span><span class="info-value">${payment.address || 'Not provided'}</span></div>
+        <div class="info-row"><span class="info-label">City</span><span class="info-value">${payment.city || 'Not provided'}</span></div>
+        <div class="info-row"><span class="info-label">Payment</span><span class="info-value">${payment.method || 'Not provided'}</span></div>
+      `;
+
+      renderHistory();
+    }
+
+    function renderHistory(){
+      historyList.innerHTML = allOrders.length ? allOrders.map(order => `
+        <div class="history-card">
+          <div class="history-top">
+            <div>
+              <p class="history-id">${order.id}</p>
+              <div class="history-date">${order.date}</div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge-paid">Paid</span>
+              <button class="delete-order" type="button" data-delete-order="${order.id}">Delete</button>
+            </div>
+          </div>
+          <div class="history-items">${order.itemsSummary}</div>
+          <div class="history-total">
+            <span>Total</span>
+            <span class="amt">₹${order.total}</span>
+          </div>
+        </div>
+      `).join('') : '<div class="history-card"><div class="meta">No previous orders yet.</div></div>';
+
+      historyList.querySelectorAll('[data-delete-order]').forEach(button => {
+        button.addEventListener('click', () => {
+          const orderId = button.dataset.deleteOrder;
+          if(!confirm('Delete order ' + orderId + ' from history?')) return;
+
+          allOrders = allOrders.filter(order => order.id !== orderId);
+          localStorage.setItem('ak_orders', JSON.stringify(allOrders));
+
+          if(latestOrder && latestOrder.id === orderId){
+            localStorage.removeItem('ak_latest_order');
+            window.location.reload();
+            return;
+          }
+
+          renderHistory();
+        });
+      });
+    }
+  </script>
+</body>
+</html>
